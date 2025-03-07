@@ -1,0 +1,37 @@
+name: Minify JavaScript
+
+on: 
+  push:
+    branches:
+      - main  # Ou a branch que você usa
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Instalar Terser
+        run: npm install -g terser
+
+      - name: Minificar todos os arquivos JS na pasta lib/
+        run: |
+          for file in lib/*.js; do
+            if [[ $file != *.min.js ]]; then  # Evita re-minificar arquivos já minificados
+              terser "$file" -o "${file%.js}.min.js" --compress --mangle --format max_line_len=120
+            fi
+          done
+
+      - name: Commit e Push dos arquivos minificados
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add lib/*.min.js
+          git commit -m "Minify JS via GitHub Actions" || echo "Nada para commitar"
+          git push
