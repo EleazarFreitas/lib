@@ -28,21 +28,21 @@ jobs:
             fi
           done
 
-      # - name: Commit e Push dos arquivos minificados
+      - name: Commit e Push dos arquivos minificados
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add lib/*.min.js
+          git commit -m "Minify JS via GitHub Actions" || echo "Nada para commitar"
+          git push
+
+      # - name: Configurar Git
       #   run: |
-      #     git config --global user.name 'github-actions'
-      #     git config --global user.email 'github-actions@github.com'
-      #     git add lib/*.min.js
-      #     git commit -m "Minify JS via GitHub Actions" || echo "Nada para commitar"
-      #     git push
+      #     git config --global user.name "github-actions[bot]"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Configurar Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Autenticar e Enviar alterações
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/EleazarFreitas/lib.git
-          git push origin main
+      # - name: Autenticar e Enviar alterações
+      #   run: |
+      #     git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/EleazarFreitas/lib.git
+      #     git push origin main
 
