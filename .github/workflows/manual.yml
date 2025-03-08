@@ -1,0 +1,25 @@
+name: Atualizar teste.html
+
+on:
+  repository_dispatch:
+    types: [atualizar_html]
+
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Substituir {{valor}} no arquivo teste.html
+        run: |
+          sed -i 's/{{valor}}/${{ github.event.client_payload.valor }}/g' 34/teste.html
+
+      - name: Commit e Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@github.com"
+          git add 34/teste.html
+          git commit -m "Atualização automática do teste.html"
+          git push
