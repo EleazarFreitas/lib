@@ -1,4 +1,4 @@
-name: Atualizar teste.html
+name: Atualizar teste.html dinamicamente
 
 on:
   repository_dispatch:
@@ -12,14 +12,20 @@ jobs:
       - name: Checkout do repositório
         uses: actions/checkout@v3
 
-      - name: Substituir {{valor}} no arquivo teste.html
+      - name: Substituir {{valor}} no arquivo da pasta ${{ github.event.client_payload.pasta }}
         run: |
-          sed -i 's/{{valor}}/${{ github.event.client_payload.valor }}/g' 34/teste.html
+          FILE_PATH="${{ github.event.client_payload.pasta }}/teste.html"
+          if [ -f "$FILE_PATH" ]; then
+            sed -i 's/{{valor}}/${{ github.event.client_payload.valor }}/g' "$FILE_PATH"
+          else
+            echo "Arquivo não encontrado: $FILE_PATH"
+            exit 1
+          fi
 
       - name: Commit e Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions@github.com"
-          git add 34/teste.html
-          git commit -m "Atualização automática do teste.html"
+          git add .
+          git commit -m "Atualização automática do teste.html na pasta ${{ github.event.client_payload.pasta }}"
           git push
